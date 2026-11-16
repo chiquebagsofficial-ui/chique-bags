@@ -34,7 +34,7 @@ export default function Footer({ settings, categories, picks }: { settings: Sett
             <p className="font-serif text-3xl font-medium uppercase tracking-[0.3em]">Chique</p>
             <p className="mt-1 text-[0.55rem] font-medium uppercase tracking-[0.62em] text-gold">Bags</p>
             <p className="mt-6 max-w-xs text-[0.9rem] leading-relaxed text-white/65">
-              Handcrafted sling and crossbody bags, finished with gold-tone hardware and made with care in India.
+              Handcrafted luxury embellished bags finished with gold hardware and made with care in India.
             </p>
             {settings.instagram && (
               <a href={settings.instagram} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex items-center gap-2 text-[0.85rem] text-white/80 hover:text-white"><Instagram size={18} /> @chiquebagsofficial</a>
@@ -46,7 +46,7 @@ export default function Footer({ settings, categories, picks }: { settings: Sett
             <ul className="mt-5 space-y-3">
               <li><Link href="/shop" className={link}>All bags</Link></li>
               {categories.map((c) => <li key={c.slug}><Link href={`/shop?category=${c.slug}`} className={link}>{c.name}</Link></li>)}
-              <li><Link href="/shop?max=999" className={link}>Under ₹999</Link></li>
+              <li><Link href="/shop?sale=1" className={link}>Sale</Link></li>
               <li><Link href="/gifting" className={link}>Gifting</Link></li>
             </ul>
           </div>
@@ -65,7 +65,7 @@ export default function Footer({ settings, categories, picks }: { settings: Sett
           <div>
             <h3 className="text-[0.68rem] font-medium uppercase tracking-[0.3em] text-gold">Contact</h3>
             <ul className="mt-5 space-y-3 text-[0.88rem] text-white/65">
-              {settings.contactEmail && <li className="flex items-center gap-2.5"><Mail size={15} /> {settings.contactEmail}</li>}
+              {settings.contactEmail && <li className="flex items-center gap-2.5"><Mail size={15} /> <a href={`mailto:${settings.contactEmail}`} className="hover:text-white">{settings.contactEmail}</a></li>}
               {settings.contactPhone && <li className="flex items-center gap-2.5"><Phone size={15} /> {settings.contactPhone}</li>}
               {settings.address && <li className="flex items-center gap-2.5"><MapPin size={15} /> {settings.address}</li>}
               <li><Link href="/contact" className="text-white underline underline-offset-4">Write to us</Link></li>

@@ -74,15 +74,16 @@ async function loadNavCategories() {
 
 export const getNavCategories = unstable_cache(loadNavCategories, ["nav-categories"], { tags: ["catalog"], revalidate: 60 });
 
-// Every colour of every live product, for the shop's colour filter. Small, and shared by all shop visits for a minute.
+// Every colour that is in stock, for the shop's colour filter. A colour appears here as soon as it has stock and drops off when it sells out.
+// Saving a product in the admin refreshes this at once; stock changes from orders show within half a minute.
 export type ColourIndexRow = { productId: string; hex: string; stock: number };
 export const getColourIndex = unstable_cache(
   async (): Promise<ColourIndexRow[]> => {
-    const rows = await prisma.productVariant.findMany({ where: { product: { isActive: true } }, select: { productId: true, hex: true, stock: true } });
+    const rows = await prisma.productVariant.findMany({ where: { stock: { gt: 0 }, product: { isActive: true } }, select: { productId: true, hex: true, stock: true } });
     return rows;
   },
-  ["colour-index"],
-  { tags: ["catalog"], revalidate: 60 }
+  ["colour-index-v2"],
+  { tags: ["catalog"], revalidate: 30 }
 );
 
 export const SORTS = {

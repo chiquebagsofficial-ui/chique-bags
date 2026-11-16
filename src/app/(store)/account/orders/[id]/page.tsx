@@ -22,7 +22,8 @@ export default async function OrderDetailPage({ params }: { params: Promise<{ id
   const order = await prisma.order.findFirst({ where: { id, userId: user.id }, include: { items: { include: { product: { select: { slug: true } } } }, returns: { include: { events: { orderBy: { createdAt: "asc" } } }, orderBy: { createdAt: "desc" } } } });
   if (!order) notFound();
   const a = order.shippingAddress as Record<string, string>;
-  const canCancel = ["PENDING", "CONFIRMED", "PROCESSING"].includes(order.status);
+  // "No cancellations" policy: only an order that was never paid can be cancelled by the customer.
+  const canCancel = ["PENDING", "CONFIRMED", "PROCESSING"].includes(order.status) && (order.paymentStatus === "UNPAID" || order.paymentStatus === "FAILED");
   const paid = order.paymentStatus === "PAID" || order.paymentStatus === "PARTIALLY_REFUNDED" || order.paymentStatus === "REFUNDED";
   const hasOpenReturn = order.returns.some((r) => OPEN_STATUSES.includes(r.status));
   const returnable = canRequestReturn(order) && !hasOpenReturn;

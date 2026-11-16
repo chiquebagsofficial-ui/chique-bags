@@ -9,8 +9,8 @@ const siteUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3020";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
-  title: { default: "Chique Bags | Handcrafted Sling & Crossbody Bags", template: "%s | Chique Bags" },
-  description: "Handcrafted vegan-leather sling and crossbody bags with gold-finish hardware. Free shipping on every order, delivered across India.",
+  title: { default: "Chique Bags | Handcrafted Luxury Embellished Bags", template: "%s | Chique Bags" },
+  description: "Handcrafted luxury embellished bags finished with gold hardware and made with care in India. Free shipping on every order.",
   openGraph: { type: "website", siteName: "Chique Bags", locale: "en_IN" },
   robots: { index: true, follow: true },
 };

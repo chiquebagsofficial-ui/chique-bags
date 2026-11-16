@@ -69,7 +69,7 @@ export default function Header({ categories, announcement }: { categories: Cat[]
                         ["/shop?sort=popular", "Bestsellers"],
                         ["/shop?sort=newest", "New arrivals"],
                         ...categories.map((c) => [`/shop?category=${c.slug}`, c.name]),
-                        ["/shop?max=999", `Under ${formatINR(999)}`],
+                        ["/shop?sale=1", "Sale"],
                       ].map(([href, label]) => (
                         <Link key={href} href={href} className="block px-6 py-2.5 text-[0.8rem] tracking-wide transition hover:bg-blush hover:text-berry">{label}</Link>
                       ))}

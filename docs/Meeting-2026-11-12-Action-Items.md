@@ -21,8 +21,8 @@ Status column: **Done** = built and tested locally, **Open** = not started, **Bl
 | 7 | Invoice: remove tax identification details | Optional: show the store email and phone once Priyanka confirms them. | Done |
 | 8 | Categories | Keep only the intended ones and delete the extras. Priyanka named Luxury, Clutches and Metal bags. Flapbags needs her confirmation. | Done (four categories live; Flapbags to confirm with Priyanka) |
 | 9 | Category image upload | Upload button in Admin > Categories, like product photo upload. She wants to add her own images, not paste links. | Done |
-| 10 | Homepage reels section | The reels play on loop, optional start/stop. Tapping a reel opens Instagram; a separate button under each goes to its product page. Videos are stored on our own storage, not embedded from Instagram. | Open |
-| 11 | Our Story page | Take the text from the WhatsApp group; add images when received. | Blocked (images) |
+| 10 | Homepage reels section | Three reels play on loop at the bottom of the homepage and a click opens the matching reel on Instagram (list in `src/lib/reels.ts`, videos on Cloudinary). Per-reel product buttons and admin management are not built. | Done (basic) |
+| 11 | Our Story page | Priyanka's text and two photos are on the page. | Done |
 | 12 | Logo | Place it once received. | Blocked (logo) |
 | 13 | Automated order emails | The emails are built and send through SMTP (confirmation, shipped, delivered, verification codes). Needs the Google account's app password in `SMTP_USER` / `SMTP_PASSWORD`; check it with `npm run mail:test -- you@example.com`. | Code ready, blocked on credentials |
 | 14 | Real admin email | Replace the dummy test admin address before launch. Not chargeable. | Blocked (email) |

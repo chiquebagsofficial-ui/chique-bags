@@ -4,6 +4,7 @@ import { Hand, RotateCcw, ShieldCheck, Truck } from "lucide-react";
 import GiftSection from "@/components/store/GiftSection";
 import HeroBanners from "@/components/store/HeroBanners";
 import ProductCard from "@/components/store/ProductCard";
+import ReelsSection from "@/components/store/ReelsSection";
 import Testimonials from "@/components/store/Testimonials";
 import { getCards, getNavCategories } from "@/lib/catalog";
 import { unstable_cache } from "next/cache";
@@ -110,18 +111,18 @@ export default async function HomePage() {
         <div className="wrap grid items-center gap-12 py-20 lg:grid-cols-2 lg:gap-24 lg:py-28">
           <div className="relative mx-auto w-full max-w-md lg:max-w-none">
             <div className="relative aspect-[4/5] overflow-hidden bg-line">
-              {settings.storyImage && <Image src={settings.storyImage} alt="Women carrying Chique Bags leather bags" fill sizes="(min-width:1024px) 45vw, 90vw" className="object-cover" />}
+              <Image src="/story/stall.jpg" alt="Chique Bags embellished clutches and handbags on display" fill sizes="(min-width:1024px) 45vw, 90vw" className="object-cover" />
             </div>
             <div className="pointer-events-none absolute -bottom-5 -right-5 hidden h-full w-full border border-gold/60 sm:block" aria-hidden />
           </div>
           <div>
             <p className="eyebrow">Our story</p>
-            <h2 className="h-display mt-4 text-4xl sm:text-5xl lg:text-[3.6rem]">Made by hand, <em>in small batches</em></h2>
+            <h2 className="h-display mt-4 text-4xl sm:text-5xl lg:text-[3.2rem]">More than just handbags, a dream we are building <em>together</em></h2>
             <p className="mt-7 max-w-lg text-[1.02rem] leading-[1.85] text-muted">
-              Chique Bags began on Instagram with a simple belief: an everyday bag should feel special. Each piece is designed, stitched and finished by hand in India, using cruelty-free materials and hardware that catches the light.
+              Hi, I&rsquo;m Priyanka, the founder of Chique Bags. What began as a little idea has slowly become something I hold incredibly close to my heart.
             </p>
             <p className="mt-4 max-w-lg text-[1.02rem] leading-[1.85] text-muted">
-              No mass production, no shortcuts. Just bags made to be carried, loved and noticed.
+              Every bag we curate, every order we pack and every customer we get to know is a part of this journey.
             </p>
             <Link href="/about" className="btn btn-line mt-9">Read our story</Link>
           </div>
@@ -144,6 +145,9 @@ export default async function HomePage() {
           <div className="mt-14 text-center"><Link href="/shop?sort=newest" className="btn btn-line">Shop new arrivals</Link></div>
         </section>
       )}
+
+      {/* Instagram reels */}
+      <ReelsSection />
     </>
   );
 }

@@ -21,7 +21,7 @@ export async function generateMetadata({ searchParams }: { searchParams: Promise
   const cat = one(sp.category);
   const category = cat ? await prisma.category.findUnique({ where: { slug: cat } }) : null;
   return {
-    title: category ? category.name : one(sp.q) ? `Search: ${one(sp.q)}` : "Shop all bags",
+    title: category ? category.name : one(sp.q) ? `Search: ${one(sp.q)}` : one(sp.sale) === "1" ? "Sale" : "Shop all bags",
     description: category?.description ?? "Browse handcrafted bags: luxury bags, metal bags, flapbags and clutches.",
     alternates: { canonical: category ? `/shop?category=${category.slug}` : "/shop" },
   };
@@ -35,6 +35,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const min = Number(one(sp.min)) || 0;
   const max = Number(one(sp.max)) || 0;
   const inStock = one(sp.stock) === "1";
+  const onSale = one(sp.sale) === "1";
   const colours = (one(sp.colour) ?? "").split(",").filter((k) => COLOUR_KEYS.has(k));
   const page = Math.max(1, Number(one(sp.page)) || 1);
 
@@ -47,6 +48,8 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
     ...(activeCategory && { categoryId: activeCategory.id }),
     ...((min || max) && { price: { ...(min && { gte: min }), ...(max && { lte: max }) } }),
     ...(inStock && { variants: { some: { stock: { gt: 0 } } } }),
+    // A bag is on sale when it has an original price (MRP) above its selling price. Admin only keeps an original price when it is higher.
+    ...(onSale && { originalPrice: { not: null } }),
     ...(q && {
       OR: [
         { name: { contains: q, mode: "insensitive" } },
@@ -92,14 +95,14 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   const cards = rows.map((r) => {
     const card = toCard(r);
     if (!colours.length) return { card, colourId: undefined as string | undefined };
-    const match = card.variants.find((v) => colours.includes(colourFamily(v.hex)) && (!inStock || v.stock > 0)) ?? card.variants.find((v) => colours.includes(colourFamily(v.hex)));
+    const match = card.variants.find((v) => colours.includes(colourFamily(v.hex)) && v.stock > 0);
     if (!match) return { card, colourId: undefined };
     return { card: match.image ? { ...card, image: match.image, hoverImage: null } : card, colourId: match.id };
   });
 
   const href = (patch: Record<string, string | number | null>) => {
     const params = new URLSearchParams();
-    const base: Record<string, string | number | null> = { category: categorySlug ?? null, q: q || null, sort: sort === "newest" ? null : sort, min: min || null, max: max || null, colour: colours.length ? colours.join(",") : null, stock: inStock ? 1 : null, page: null };
+    const base: Record<string, string | number | null> = { category: categorySlug ?? null, q: q || null, sort: sort === "newest" ? null : sort, min: min || null, max: max || null, colour: colours.length ? colours.join(",") : null, stock: inStock ? 1 : null, sale: onSale ? 1 : null, page: null };
     for (const [k, v] of Object.entries({ ...base, ...patch })) if (v !== null && v !== "" && v !== undefined) params.set(k, String(v));
     const s = params.toString();
     return s ? `/shop?${s}` : "/shop";
@@ -111,6 +114,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
   if (activeCategory) applied.push({ label: activeCategory.name, remove: href({ category: null }) });
   if (min || max) applied.push({ label: min && max ? `${formatINR(min)} – ${formatINR(max)}` : min ? `${formatINR(min)} & above` : `Under ${formatINR(max)}`, remove: href({ min: null, max: null }) });
   for (const key of colours) applied.push({ label: COLOUR_FAMILIES.find((c) => c.key === key)!.label, remove: href({ colour: colours.filter((k) => k !== key).join(",") || null }) });
+  if (onSale) applied.push({ label: "Sale", remove: href({ sale: null }) });
   if (inStock) applied.push({ label: "In stock only", remove: href({ stock: null }) });
 
   const sorts = (Object.keys(SORTS) as SortKey[]).map((k) => ({ value: k, label: SORTS[k].label }));
@@ -122,7 +126,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
         <Link href="/" className="hover:text-rose">Home</Link> / <span className="text-ink">{activeCategory?.name ?? "Shop"}</span>
       </nav>
       <header className="mb-8">
-        <h1 className="h-display text-4xl sm:text-5xl">{q ? `Results for “${q}”` : (activeCategory?.name ?? "All bags")}</h1>
+        <h1 className="h-display text-4xl sm:text-5xl">{q ? `Results for “${q}”` : onSale && !activeCategory ? "Sale" : (activeCategory?.name ?? "All bags")}</h1>
         {activeCategory?.description && <p className="mt-3 max-w-xl text-muted">{activeCategory.description}</p>}
       </header>
 
@@ -139,7 +143,7 @@ export default async function ShopPage({ searchParams }: { searchParams: Promise
                   {a.label} <X size={13} />
                 </Link>
               ))}
-              <Link href={href({ category: null, min: null, max: null, colour: null, stock: null, q: null })} className="text-xs font-medium underline">Clear all</Link>
+              <Link href={href({ category: null, min: null, max: null, colour: null, stock: null, sale: null, q: null })} className="text-xs font-medium underline">Clear all</Link>
             </div>
           )}
 

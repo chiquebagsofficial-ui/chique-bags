@@ -135,7 +135,7 @@ async function main() {
           eyebrow: "New season collection",
           title: "Carry elegance in *every stride*",
           subtitle: "Handcrafted sling and crossbody bags with soft, structured shapes and gold-tone hardware.",
-          ctaText: "Shop the collection", ctaHref: "/shop", cta2Text: "Under ₹999", cta2Href: "/shop?max=999",
+          ctaText: "Shop the collection", ctaHref: "/shop", cta2Text: "Sale", cta2Href: "/shop?sale=1",
           image: images.site["banner-new-season"], focus: "center 35%", theme: "light", sortOrder: 1,
         },
         {

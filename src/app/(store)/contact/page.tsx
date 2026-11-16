@@ -18,7 +18,7 @@ export default async function ContactPage() {
         <div className="space-y-6">
           <p className="max-w-md leading-relaxed text-muted">Questions about an order, a bag or a custom request? Send us a message and we'll reply within one working day.</p>
           <ul className="space-y-4 text-sm">
-            <li className="flex items-center gap-3"><Mail size={18} className="text-rose" /> {s.contactEmail}</li>
+            <li className="flex items-center gap-3"><Mail size={18} className="text-rose" /> <a href={`mailto:${s.contactEmail}`} className="hover:text-rose">{s.contactEmail}</a></li>
             {s.contactPhone && <li className="flex items-center gap-3"><Phone size={18} className="text-rose" /> {s.contactPhone}</li>}
             {s.address && <li className="flex items-center gap-3"><MapPin size={18} className="text-rose" /> {s.address}</li>}
             {s.instagram && <li><a href={s.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 hover:text-rose"><Instagram size={18} className="text-rose" /> @chiquebagsofficial</a></li>}

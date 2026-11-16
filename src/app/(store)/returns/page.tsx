@@ -19,7 +19,7 @@ export default function ReturnsPage() {
             "Contact us on WhatsApp 9817742416 for further details.",
           ],
         },
-        { heading: "Cancellations", body: "You can cancel an order from your account any time before it ships, and the full amount is refunded to the original payment method. After shipping, an order can't be cancelled." },
+        { heading: "Cancellations", body: "No cancellations. Once an order is placed, it cannot be cancelled." },
       ]}
     />
   );

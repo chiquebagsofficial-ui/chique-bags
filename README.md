@@ -27,6 +27,8 @@ Next.js 16 (App Router) Â· React 19 Â· TypeScript Â· Tailwind CSS 4 Â· P
 
 **Instagram strip:** the footer shows our bestselling bags in an Instagram-style grid linking to the Instagram profile.
 
+**Instagram reels:** three muted, looping reels at the bottom of the homepage (stored on Cloudinary). They play when scrolled into view, and a click opens the matching reel on Instagram. The list is in `src/lib/reels.ts` (managing it from the admin panel is a separate feature).
+
 **Homepage banners:** two or three full-width slides (photo, headline, text, buttons) managed in Admin > Banners, with swipe and auto-play.
 
 **Gifting:** a gift box and a handwritten note (up to 200 characters) can be added to any order at checkout. The owner sets the price, on/off and the gift box photo in Admin > Settings. Gift orders are highlighted in the admin order screen with the note to write.

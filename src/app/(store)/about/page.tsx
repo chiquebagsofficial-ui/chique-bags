@@ -1,8 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getCards } from "@/lib/catalog";
-import { getSettings } from "@/lib/settings";
 
 export const metadata: Metadata = { title: "Our story", description: "More than just handbags, it's a dream we are building together. The story of Chique Bags, told by its founder, Priyanka." };
 export const dynamic = "force-dynamic";
@@ -19,9 +17,7 @@ const STORY = [
   "Thank you for giving a small business like mine a place in your wardrobe and, more importantly, a place in your lives.",
 ];
 
-export default async function AboutPage() {
-  const [[pick], settings] = await Promise.all([getCards({ isFeatured: true }, 1), getSettings()]);
-  const photo = settings.storyImage || pick?.image;
+export default function AboutPage() {
   return (
     <>
       <section className="bg-blush">
@@ -31,13 +27,20 @@ export default async function AboutPage() {
             <h1 className="h-display mt-3 text-4xl sm:text-5xl">More than just handbags, it&rsquo;s a dream we are building <em>together</em></h1>
             <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted">Hi, I&rsquo;m Priyanka, the founder of Chique Bags.</p>
           </div>
-          {photo && <div className="relative mx-auto aspect-[4/5] w-full max-w-md overflow-hidden"><Image src={photo} alt="A Chique Bags bag" fill sizes="448px" className="object-cover" /></div>}
+          <div className="relative mx-auto aspect-[3/4] w-full max-w-md overflow-hidden"><Image src="/story/stall.jpg" alt="Chique Bags embellished clutches and handbags on display" fill priority sizes="(min-width:1024px) 448px, 90vw" className="object-cover" /></div>
         </div>
       </section>
 
       <section className="wrap max-w-3xl py-20">
         <div className="space-y-6 text-lg leading-relaxed text-muted">
-          {STORY.map((p) => <p key={p}>{p}</p>)}
+          {STORY.slice(0, 3).map((p) => <p key={p}>{p}</p>)}
+        </div>
+        <figure className="mx-auto my-12 max-w-sm">
+          <div className="relative aspect-[3/4] overflow-hidden"><Image src="/story/priyanka.jpg" alt="Priyanka, founder of Chique Bags" fill sizes="(min-width:640px) 384px, 90vw" className="object-cover" /></div>
+          <figcaption className="mt-3 text-center text-sm text-muted">Priyanka, founder of Chique Bags</figcaption>
+        </figure>
+        <div className="space-y-6 text-lg leading-relaxed text-muted">
+          {STORY.slice(3).map((p) => <p key={p}>{p}</p>)}
         </div>
         <div className="mt-12 border-t border-line pt-8">
           <p className="text-muted">With love and gratitude,</p>

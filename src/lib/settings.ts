@@ -9,7 +9,7 @@ export const DEFAULT_SETTINGS = {
   giftBoxFee: "200",
   giftBoxImage: "",
   storyImage: "",
-  contactEmail: "hello@chiquebags.in",
+  contactEmail: "chiquebagsofficial@gmail.com",
   contactPhone: "",
   whatsapp: "",
   instagram: "https://www.instagram.com/chiquebagsofficial/",
@@ -62,7 +62,8 @@ async function loadSettings(): Promise<Settings> {
     giftBoxFee: Number(raw.giftBoxFee) || 0,
     giftBoxImage: raw.giftBoxImage,
     storyImage: raw.storyImage,
-    contactEmail: raw.contactEmail,
+    // The placeholder address used before the store had its own email is replaced, even if it was saved in Settings.
+    contactEmail: !raw.contactEmail.trim() || raw.contactEmail.trim().toLowerCase() === "hello@chiquebags.in" ? DEFAULT_SETTINGS.contactEmail : raw.contactEmail,
     contactPhone: raw.contactPhone,
     whatsapp: whatsappNumbers.join(", "),
     whatsappNumbers,
@@ -79,7 +80,7 @@ async function loadSettings(): Promise<Settings> {
 
 // Read on every page, changed rarely: keep it for a few minutes instead of asking the database each time.
 // The key carries a version: change it whenever the shape of Settings changes, so entries cached by an older build are never read.
-const cachedSettings = unstable_cache(loadSettings, ["site-settings-v2"], { tags: ["settings"], revalidate: 300 });
+const cachedSettings = unstable_cache(loadSettings, ["site-settings-v3"], { tags: ["settings"], revalidate: 300 });
 export const getSettings = cache(cachedSettings);
 
 export async function saveSettings(values: Partial<Record<SettingKey, string>>) {

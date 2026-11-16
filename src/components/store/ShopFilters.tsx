@@ -13,11 +13,21 @@ interface Props {
   total: number;
 }
 
-const PRESETS = [
-  { label: "Under ₹999", min: "", max: "999" },
-  { label: "₹1,000 – ₹1,499", min: "1000", max: "1499" },
-  { label: "₹1,500 & above", min: "1500", max: "" },
-];
+/** Three quick price bands that follow the shop's real prices (so they stay sensible when the prices change). */
+function presetsFor(bounds: { min: number; max: number } | null) {
+  if (!bounds || bounds.max - bounds.min < 300) return [];
+  const step = bounds.max - bounds.min > 4000 ? 500 : 100;
+  const round = (n: number) => Math.round(n / step) * step;
+  const a = round(bounds.min + (bounds.max - bounds.min) / 3);
+  const b = round(bounds.min + (2 * (bounds.max - bounds.min)) / 3);
+  if (a <= bounds.min || b <= a || b >= bounds.max) return [];
+  const f = (n: number) => `₹${n.toLocaleString("en-IN")}`;
+  return [
+    { label: `Under ${f(a)}`, min: "", max: String(a) },
+    { label: `${f(a)} – ${f(b)}`, min: String(a), max: String(b) },
+    { label: `${f(b)} & above`, min: String(b), max: "" },
+  ];
+}
 
 /** The filter panel beside the product grid. On a phone it opens as a full-screen panel from a Filters button. */
 export default function ShopFilters({ categories, colours, bounds, total }: Props) {
@@ -30,13 +40,15 @@ export default function ShopFilters({ categories, colours, bounds, total }: Prop
   const min = sp.get("min") ?? "";
   const max = sp.get("max") ?? "";
   const stock = sp.get("stock") === "1";
+  const sale = sp.get("sale") === "1";
+  const presets = presetsFor(bounds);
   const picked = (sp.get("colour") ?? "").split(",").filter(Boolean);
 
   const [minBox, setMinBox] = useState(min);
   const [maxBox, setMaxBox] = useState(max);
   useEffect(() => { setMinBox(min); setMaxBox(max); }, [min, max]);
 
-  const activeCount = (category ? 1 : 0) + (min || max ? 1 : 0) + picked.length + (stock ? 1 : 0);
+  const activeCount = (category ? 1 : 0) + (min || max ? 1 : 0) + picked.length + (stock ? 1 : 0) + (sale ? 1 : 0);
 
   function go(patch: Record<string, string | null>) {
     const params = new URLSearchParams(sp.toString());
@@ -64,7 +76,7 @@ export default function ShopFilters({ categories, colours, bounds, total }: Prop
 
   function clearAll() {
     const params = new URLSearchParams(sp.toString());
-    for (const k of ["category", "min", "max", "colour", "stock", "page"]) params.delete(k);
+    for (const k of ["category", "min", "max", "colour", "stock", "sale", "page"]) params.delete(k);
     const qs = params.toString();
     router.push(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
   }
@@ -124,7 +136,7 @@ export default function ShopFilters({ categories, colours, bounds, total }: Prop
               <button className="btn btn-dark btn-sm btn-block">Apply price</button>
             </form>
             <div className="mt-3 flex flex-wrap gap-2">
-              {PRESETS.map((p) => {
+              {presets.map((p) => {
                 const on = p.min === min && p.max === max;
                 return <button key={p.label} type="button" className="chip" data-active={on} onClick={() => go(on ? { min: null, max: null } : { min: p.min || null, max: p.max || null })}>{p.label}</button>;
               })}
@@ -155,9 +167,12 @@ export default function ShopFilters({ categories, colours, bounds, total }: Prop
           )}
 
           <section>
-            <h2 className={heading}>Availability</h2>
+            <h2 className={heading}>Offers &amp; stock</h2>
             <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
               <input type="checkbox" checked={stock} onChange={(e) => go({ stock: e.target.checked ? "1" : null })} className="h-4 w-4 accent-[#241f1a]" /> In stock only
+            </label>
+            <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
+              <input type="checkbox" checked={sale} onChange={(e) => go({ sale: e.target.checked ? "1" : null })} className="h-4 w-4 accent-[#241f1a]" /> Sale
             </label>
           </section>
         </div>
