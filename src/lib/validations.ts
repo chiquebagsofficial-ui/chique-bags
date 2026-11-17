@@ -46,7 +46,7 @@ export const productSchema = z.object({
   description: z.string().trim().max(5000).nullish(),
   images: z.array(z.string().url()).max(10),
   features: z.array(z.string().trim().min(1).max(160)).max(12),
-  tags: z.array(z.string().trim().toLowerCase().min(1).max(30)).max(15),
+  tags: z.array(z.string().trim().toLowerCase().min(1).max(60)).max(15),
   material: z.string().trim().max(120).nullish(),
   dimensions: z.string().trim().max(120).nullish(),
   careInstructions: z.string().trim().max(600).nullish(),
@@ -89,7 +89,28 @@ export const categorySchema = z.object({
   isActive: z.boolean().default(true),
 });
 
+/** Names shown to the admin for the product / category fields, so an error says which box to fix. */
+const FIELD_LABELS: Record<string, string> = {
+  name: "Name",
+  shortDescription: "Short description",
+  description: "Full description",
+  features: "Highlights",
+  tags: "Search tags",
+  material: "Material",
+  dimensions: "Dimensions",
+  careInstructions: "Care instructions",
+  variants: "Colours & stock",
+  images: "Photos",
+  price: "Selling price",
+  originalPrice: "MRP / original price",
+};
+
 export function firstError(error: z.ZodError): string {
   const issue = error.issues[0];
-  return issue?.message ?? "Invalid input";
+  if (!issue) return "Invalid input";
+  const label = typeof issue.path[0] === "string" ? FIELD_LABELS[issue.path[0]] : undefined;
+  // Messages written by hand already read well; zod's built-in ones ("Too big: …") need the field name.
+  const builtIn = /^(Too (big|small)|Invalid|Expected|Required)/i.test(issue.message);
+  if (label && builtIn) return `${label}: ${issue.message.charAt(0).toLowerCase()}${issue.message.slice(1)}`;
+  return issue.message;
 }

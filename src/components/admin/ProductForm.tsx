@@ -132,7 +132,7 @@ export default function ProductForm({ initial, categories }: { initial: ProductF
             <div><label className="label" htmlFor="pf-dim">Dimensions</label><input id="pf-dim" className="input" placeholder="22 × 14 × 6 cm" value={v.dimensions} onChange={text("dimensions")} /></div>
           </div>
           <div><label className="label" htmlFor="pf-care">Care instructions</label><textarea id="pf-care" className="input min-h-20" value={v.careInstructions} onChange={text("careInstructions")} /></div>
-          <div><label className="label" htmlFor="pf-tags">Search tags (comma separated)</label><input id="pf-tags" className="input" placeholder="crescent, black, under999" value={v.tags} onChange={text("tags")} /></div>
+          <div><label className="label" htmlFor="pf-tags">Search tags (comma separated)</label><input id="pf-tags" className="input" placeholder="crescent, black, under999" aria-describedby="pf-tags-help" value={v.tags} onChange={text("tags")} /><p id="pf-tags-help" className="mt-1 text-xs text-muted">Short words only, separated by commas (each up to 60 characters). Put sentences in the description instead.</p></div>
         </section>
 
         <section className={sec}>
