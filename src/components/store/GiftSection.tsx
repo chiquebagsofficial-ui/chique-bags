@@ -16,12 +16,13 @@ const PLACEHOLDER = /chique-bags\/(stock|seed)\//;
 export default function GiftSection({ image: custom, fee, full = false }: { image: string; fee: number; full?: boolean }) {
   const image = custom && !PLACEHOLDER.test(custom) ? custom : DEFAULT_IMAGE;
   return (
-    <section className={full ? "" : "bg-blush"}>
-      <div className={`grid ${full ? "" : "wrap !px-0 lg:!px-0"} lg:grid-cols-2`}>
-        <div className="relative min-h-[340px] sm:min-h-[460px] lg:min-h-[620px]">
-          <Image src={image} alt="A pink Chique Bags gift box tied with a satin ribbon" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover object-[50%_55%]" priority={full} />
+    <section className="bg-blush">
+      {/* Kept inside the normal page width, so the photo has a margin on the left instead of running to the screen edge. */}
+      <div className="wrap grid items-center gap-10 py-12 sm:py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
+        <div className="relative h-[340px] sm:h-[440px] lg:h-[540px]">
+          <Image src={image} alt="A pink Chique Bags gift box tied with a satin ribbon" fill sizes="(min-width:1360px) 620px, (min-width:1024px) 45vw, 100vw" className="object-cover object-[50%_58%]" priority={full} />
         </div>
-        <div className="flex flex-col justify-center bg-blush px-6 py-14 sm:px-14 lg:px-20 lg:py-20">
+        <div className="flex flex-col justify-center lg:pr-6">
           <p className="eyebrow">Gifting</p>
           <h2 className="h-display mt-4 text-4xl sm:text-5xl lg:text-[3.4rem]">Make it a gift, <em>in one tap</em></h2>
           <p className="mt-6 max-w-md leading-relaxed text-muted">
