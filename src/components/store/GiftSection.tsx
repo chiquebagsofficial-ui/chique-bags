@@ -8,12 +8,18 @@ const STEPS = [
   ["03", "Write your note", "Your message goes on a card tucked inside the box."],
 ];
 
-export default function GiftSection({ image, fee, full = false }: { image: string; fee: number; full?: boolean }) {
+/** The real Chique Bags gift box. Shown unless the owner sets their own photo in Admin > Settings. */
+const DEFAULT_IMAGE = "/gifting/gift-box.jpg";
+/** The seed script stores stock placeholder photos under these Cloudinary folders; they count as "not set". */
+const PLACEHOLDER = /chique-bags\/(stock|seed)\//;
+
+export default function GiftSection({ image: custom, fee, full = false }: { image: string; fee: number; full?: boolean }) {
+  const image = custom && !PLACEHOLDER.test(custom) ? custom : DEFAULT_IMAGE;
   return (
     <section className={full ? "" : "bg-blush"}>
       <div className={`grid ${full ? "" : "wrap !px-0 lg:!px-0"} lg:grid-cols-2`}>
         <div className="relative min-h-[340px] sm:min-h-[460px] lg:min-h-[620px]">
-          {image && <Image src={image} alt="A gift box tied with a ribbon, with a note card" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover" priority={full} />}
+          <Image src={image} alt="A pink Chique Bags gift box tied with a satin ribbon" fill sizes="(min-width:1024px) 50vw, 100vw" className="object-cover object-[50%_55%]" priority={full} />
         </div>
         <div className="flex flex-col justify-center bg-blush px-6 py-14 sm:px-14 lg:px-20 lg:py-20">
           <p className="eyebrow">Gifting</p>
