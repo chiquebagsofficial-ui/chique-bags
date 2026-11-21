@@ -103,6 +103,18 @@ model VerificationCode {
   @@map("verification_codes")
 }
 
+// One row per code emailed at checkout / login, kept for a day so "3 codes per hour" can be counted.
+// (verification_codes itself is cleared as codes are used, so it can't be counted.)
+model CodeSend {
+  id        String      @id @default(cuid())
+  email     String
+  purpose   CodePurpose
+  createdAt DateTime    @default(now())
+
+  @@index([email, purpose, createdAt])
+  @@map("code_sends")
+}
+
 // ─── Catalogue ──────────────────────────────────────────────────────────
 
 model Category {

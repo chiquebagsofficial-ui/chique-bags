@@ -1,14 +1,14 @@
+import { NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { fail, limit, ok, parseBody } from "@/lib/api";
-import { issueCode } from "@/lib/codes";
+import { issueCode, pruneSendLog, releaseSendSlot, takeSendSlot } from "@/lib/codes";
 import { sendVerificationCode } from "@/lib/emails";
 import { emailSchema } from "@/lib/validations";
 
 export const dynamic = "force-dynamic";
 
 const schema = z.object({ email: emailSchema });
-const COOLDOWN_MS = 30_000;
 
 // Sign in or register with an email code, step 1: email a 6-digit code to the address typed.
 // Used at checkout ("Get OTP") and on the login page ("Email me a code").
@@ -24,10 +24,17 @@ export async function POST(req: Request) {
   const existing = await prisma.user.findUnique({ where: { email }, select: { role: true } });
   if (existing && existing.role !== "CUSTOMER") return fail("This email belongs to a store account. Please use a different email.", 400);
 
-  const recent = await prisma.verificationCode.findFirst({ where: { email, purpose: "CHECKOUT", createdAt: { gt: new Date(Date.now() - COOLDOWN_MS) } } });
-  if (recent) return fail("A code was just sent. Please wait a few seconds before asking for another.", 429);
+  // At most 3 codes per email per hour (and a 30-second gap), counted in the database.
+  const slot = await takeSendSlot(email, "CHECKOUT");
+  if (!slot.ok) return NextResponse.json({ error: slot.error, retryAfterSec: slot.retryAfterSec }, { status: 429 });
 
-  const code = await issueCode(email, "CHECKOUT");
-  await sendVerificationCode(email, code, "CHECKOUT");
-  return ok({ ok: true });
+  try {
+    const code = await issueCode(email, "CHECKOUT");
+    await sendVerificationCode(email, code, "CHECKOUT");
+  } catch (e) {
+    await releaseSendSlot(slot.id);
+    throw e;
+  }
+  void pruneSendLog();
+  return ok({ ok: true, remaining: slot.remaining });
 }
